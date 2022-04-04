@@ -176,12 +176,7 @@ impl Scanner {
 
         let text: String = self.source[self.start..self.current].iter().collect();
         if let Some(ttype) = Scanner::keyword(&text) {
-            match ttype {
-                TokenType::Nil => self.add_token_object(ttype, Some(Object::Nil)),
-                TokenType::True => self.add_token_object(ttype, Some(Object::True)),
-                TokenType::False => self.add_token_object(ttype, Some(Object::False)),
-                _ => self.add_token(ttype),
-            }
+            self.add_token(ttype);
         } else {
             self.add_token(TokenType::Identifier)
         }
