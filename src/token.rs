@@ -1,7 +1,7 @@
 use crate::token_type::TokenType;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Object {
     Num(f64),
     Str(String),
@@ -22,7 +22,7 @@ impl fmt::Display for Object {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub ttype: TokenType,
     pub lexeme: String,
@@ -37,6 +37,23 @@ impl Token {
             lexeme,
             literal,
             line,
+        }
+    }
+
+    pub fn is(&self, ttype: TokenType) -> bool {
+        self.ttype == ttype
+    }
+
+    pub fn token_type(&self) -> TokenType {
+        self.ttype
+    }
+
+    pub fn dup(&self) -> Token {
+        Token {
+            ttype: self.ttype,
+            lexeme: self.lexeme.to_string(),
+            literal: self.literal.clone(),
+            line: self.line,
         }
     }
 
