@@ -1,12 +1,13 @@
 mod ast_printer;
 mod error;
 mod expr;
+mod object;
 mod parser;
 mod scanner;
 mod token;
 mod token_type;
 
-use ast_printer::AstPrinter;
+use ast_printer::{AstPrinter, RpnPrinter};
 use error::LoxError;
 use parser::Parser;
 use scanner::Scanner;
@@ -65,8 +66,11 @@ fn run(source: String) -> Result<(), LoxError> {
     match expr {
         None => {}
         Some(expr) => {
-            let printer = AstPrinter {};
-            println!("{}", printer.print(&expr).unwrap());
+            let printer1 = AstPrinter {};
+            println!("AstPrint: {}", printer1.print(&expr)?);
+
+            let printer2 = RpnPrinter {};
+            println!("RpnPrint: {}", printer2.print(&expr)?);
         }
     }
     Ok(())

@@ -1,5 +1,5 @@
 use crate::error::LoxError;
-use crate::token::Object;
+use crate::object::Object;
 use crate::token::Token;
 use crate::token_type::TokenType;
 
