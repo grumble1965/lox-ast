@@ -30,6 +30,7 @@ fn define_ast(output_dir: &str, base_name: &str, types: &[String]) -> io::Result
 
     // use modules
     writeln!(file, "use crate::error::*;")?;
+    writeln!(file, "use crate::object::*;")?;
     writeln!(file, "use crate::token::*;")?;
     writeln!(file)?;
 
