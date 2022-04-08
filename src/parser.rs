@@ -131,19 +131,13 @@ impl<'a> Parser<'a> {
 
         if self.is_match(&[TokenType::LeftParen]) {
             let expr: Expr = self.expression()?;
-            self.consume(
-                TokenType::RightParen,
-                "Expect ')' after expression".to_string(),
-            )?;
+            self.consume(TokenType::RightParen, "Expect ')' after expression")?;
             return Ok(Expr::Grouping(GroupingExpr {
                 expression: Box::new(expr),
             }));
         }
 
-        Err(LoxError::error(
-            self.previous().line,
-            "Expect expression.".to_string(),
-        ))
+        Err(LoxError::error(self.previous().line, "Expect expression."))
     }
 
     fn is_match(&mut self, types: &[TokenType]) -> bool {
@@ -156,8 +150,8 @@ impl<'a> Parser<'a> {
         false
     }
 
-    fn error(token: Token, message: String) -> Result<Token, LoxError> {
-        Err(LoxError::parse_error(token, message))
+    fn error(token: Token, message: &str) -> Result<Token, LoxError> {
+        Err(LoxError::parse_error(&token, message))
     }
 
     fn synchronize(&mut self) {
@@ -186,7 +180,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn consume(&mut self, ttype: TokenType, err_msg: String) -> Result<Token, LoxError> {
+    fn consume(&mut self, ttype: TokenType, err_msg: &str) -> Result<Token, LoxError> {
         if self.check(ttype) {
             Ok(self.advance().dup())
         } else {

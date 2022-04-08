@@ -1,16 +1,17 @@
 mod ast_printer;
 mod error;
 mod expr;
+mod interpreter;
 mod object;
 mod parser;
 mod scanner;
 mod token;
 mod token_type;
 
-use ast_printer::{AstPrinter, RpnPrinter};
-use error::LoxError;
-use parser::Parser;
-use scanner::Scanner;
+use ast_printer::*;
+use error::*;
+use parser::*;
+use scanner::*;
 use std::env::args;
 use std::io::{self, stdout, BufRead, Write};
 

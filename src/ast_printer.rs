@@ -8,7 +8,7 @@ impl AstPrinter {
         expr.accept(self)
     }
 
-    fn parenthesize(&self, name: &String, exprs: &[&Box<Expr>]) -> Result<String, LoxError> {
+    fn parenthesize(&self, name: &str, exprs: &[&Expr]) -> Result<String, LoxError> {
         let mut builder = format!("({name}");
 
         for expr in exprs {
@@ -26,7 +26,7 @@ impl ExprVisitor<String> for AstPrinter {
     }
 
     fn visit_grouping_expr(&self, expr: &GroupingExpr) -> Result<String, LoxError> {
-        self.parenthesize(&"group".to_string(), &[&expr.expression])
+        self.parenthesize("group", &[&expr.expression])
     }
 
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> Result<String, LoxError> {
@@ -49,8 +49,8 @@ impl RpnPrinter {
         expr.accept(self)
     }
 
-    fn parenthesize(&self, name: &String, exprs: &[&Box<Expr>]) -> Result<String, LoxError> {
-        let mut builder = format!("");
+    fn parenthesize(&self, name: &str, exprs: &[&Expr]) -> Result<String, LoxError> {
+        let mut builder = String::new();
 
         for expr in exprs {
             builder = format!("{builder}{} ", expr.accept(self)?);
@@ -67,7 +67,7 @@ impl ExprVisitor<String> for RpnPrinter {
     }
 
     fn visit_grouping_expr(&self, expr: &GroupingExpr) -> Result<String, LoxError> {
-        self.parenthesize(&"group".to_string(), &[&expr.expression])
+        self.parenthesize("group", &[&expr.expression])
     }
 
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> Result<String, LoxError> {
