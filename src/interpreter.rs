@@ -11,7 +11,7 @@ impl Interpreter {
     }
 
     fn is_truthy(&self, obj: &Object) -> bool {
-        !matches!(obj, Object::False | Object::Nil)
+        !matches!(obj, Object::Nil | Object::Bool(false))
     }
 
     fn is_numeric(&self, obj: &Object) -> bool {
@@ -100,13 +100,7 @@ impl ExprVisitor<Object> for Interpreter {
                 Object::Num(n) => Ok(Object::Num(-n)),
                 _ => Err(LoxError::error(0, "unary minus only applies to numbers")),
             },
-            TokenType::Bang => {
-                if !self.is_truthy(&right) {
-                    Ok(Object::True)
-                } else {
-                    Ok(Object::False)
-                }
-            }
+            TokenType::Bang => Ok(Object::Bool(!self.is_truthy(&right))),
             _ => return Err(LoxError::error(0, "unhandled unary operator")),
         }
     }

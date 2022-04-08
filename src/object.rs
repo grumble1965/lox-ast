@@ -4,19 +4,17 @@ use std::fmt;
 pub enum Object {
     Num(f64),
     Str(String),
+    Bool(bool),
     Nil,
-    True,
-    False,
 }
 
 impl fmt::Display for Object {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Object::Num(x) => write!(f, "{x}"),
-            Object::Str(x) => write!(f, "\"{x}\""),
+            Object::Num(n) => write!(f, "{n}"),
+            Object::Str(s) => write!(f, "\"{s}\""),
+            Object::Bool(b) => write!(f, "{b}"),
             Object::Nil => write!(f, "Nil"),
-            Object::True => write!(f, "true"),
-            Object::False => write!(f, "false"),
         }
     }
 }
