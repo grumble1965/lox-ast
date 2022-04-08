@@ -1,6 +1,7 @@
 use crate::error::LoxError;
 use crate::expr::*;
 use crate::object::Object;
+use crate::token::*;
 use crate::token_type::TokenType;
 
 pub struct Interpreter;
@@ -9,17 +10,12 @@ impl Interpreter {
     fn evaluate(&self, expr: &Expr) -> Result<Object, LoxError> {
         expr.accept(self)
     }
-
-    fn is_truthy(&self, obj: &Object) -> bool {
-        !matches!(obj, Object::Nil | Object::Bool(false))
-    }
 }
 
 impl ExprVisitor<Object> for Interpreter {
     fn visit_binary_expr(&self, expr: &BinaryExpr) -> Result<Object, LoxError> {
         let left = self.evaluate(&expr.left)?;
         let right = self.evaluate(&expr.right)?;
-        let line = expr.operator.line;
 
         let result: Object = match expr.operator.token_type() {
             TokenType::Minus => left - right,
@@ -36,7 +32,10 @@ impl ExprVisitor<Object> for Interpreter {
         };
 
         match result {
-            Object::ArithmeticError => Err(LoxError::error(line, "Invalid Arithmetic Expression")),
+            Object::ArithmeticError => Err(LoxError::runtime_error(
+                &expr.operator,
+                "Invalid Arithmetic Expression",
+            )),
             a => Ok(a),
         }
     }
@@ -48,22 +47,35 @@ impl ExprVisitor<Object> for Interpreter {
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> Result<Object, LoxError> {
         match &expr.value {
             Some(value) => Ok(value.clone()),
-            _ => Err(LoxError::error(0, "invalid literal value")),
+            _ => Err(LoxError::runtime_error(
+                &Token {
+                    ttype: TokenType::Eof,
+                    lexeme: "".to_string(),
+                    literal: None,
+                    line: 0,
+                },
+                "invalid literal value",
+            )),
         }
     }
 
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> Result<Object, LoxError> {
         let right = self.evaluate(&expr.right)?;
-        let line = expr.operator.line;
 
         let result: Result<Object, LoxError> = match expr.operator.token_type() {
             TokenType::Minus => Ok(-right),
             TokenType::Bang => Ok(!right),
-            _ => Err(LoxError::error(line, "unhandled unary operator")),
+            _ => Err(LoxError::runtime_error(
+                &expr.operator,
+                "unhandled unary operator",
+            )),
         };
 
         if matches!(result, Ok(Object::ArithmeticError)) {
-            Err(LoxError::error(line, "Invalid Arithmetic Expression"))
+            Err(LoxError::runtime_error(
+                &expr.operator,
+                "Invalid Arithmetic Expression",
+            ))
         } else {
             result
         }
@@ -73,7 +85,6 @@ impl ExprVisitor<Object> for Interpreter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::token::*;
 
     fn invoke_unary(operator: Token, right: Object) -> Result<Object, LoxError> {
         let terp = Interpreter {};
@@ -310,8 +321,8 @@ mod tests {
     fn binary_equal_nonnil_mixed() {
         let op1 = Token::new(TokenType::EqualEqual, "==".to_string(), None, 10);
         let result = invoke_binary(Object::Num(3.0), op1, Object::Str("three".to_string()));
-        assert!(result.is_ok());
-        assert_eq!(result.ok(), Some(Object::Bool(false)));
+        // this should generate a runtime error
+        assert!(result.is_err());
     }
 
     #[test]
