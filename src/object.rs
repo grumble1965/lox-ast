@@ -24,54 +24,6 @@ impl fmt::Display for Object {
 }
 
 //
-// Binary Operations
-//
-impl Sub for Object {
-    type Output = Object;
-
-    fn sub(self, other: Self) -> Object {
-        match (self, other) {
-            (Object::Num(left), Object::Num(right)) => Object::Num(left - right),
-            _ => Object::ArithmeticError,
-        }
-    }
-}
-
-impl Add for Object {
-    type Output = Object;
-
-    fn add(self, other: Self) -> Object {
-        match (self, other) {
-            (Object::Num(left), Object::Num(right)) => Object::Num(left + right),
-            (Object::Str(left), Object::Str(right)) => Object::Str(format!("{}{}", left, right)),
-            _ => Object::ArithmeticError,
-        }
-    }
-}
-
-impl Mul for Object {
-    type Output = Object;
-
-    fn mul(self, other: Self) -> Object {
-        match (self, other) {
-            (Object::Num(left), Object::Num(right)) => Object::Num(left * right),
-            _ => Object::ArithmeticError,
-        }
-    }
-}
-
-impl Div for Object {
-    type Output = Object;
-
-    fn div(self, other: Self) -> Object {
-        match (self, other) {
-            (Object::Num(left), Object::Num(right)) => Object::Num(left / right),
-            _ => Object::ArithmeticError,
-        }
-    }
-}
-
-//
 // Unary Operations
 //
 impl Neg for Object {
