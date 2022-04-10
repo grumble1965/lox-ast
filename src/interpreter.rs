@@ -10,6 +10,19 @@ impl Interpreter {
     fn evaluate(&self, expr: &Expr) -> Result<Object, LoxError> {
         expr.accept(self)
     }
+
+    pub fn interpret(&self, expr: &Expr) -> Result<(), ()> {
+        match self.evaluate(expr) {
+            Ok(value) => {
+                println!("{}", value);
+                Ok(())
+            }
+            Err(err) => {
+                err.report("");
+                Err(())
+            }
+        }
+    }
 }
 
 impl ExprVisitor<Object> for Interpreter {
